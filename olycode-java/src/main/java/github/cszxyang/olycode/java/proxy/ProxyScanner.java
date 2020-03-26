@@ -84,9 +84,11 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
     // A cache of the last few recently used Patterns
     private LRUCache<String,Pattern> patternCache =
             new LRUCache<String,Pattern>(7) {
+                @Override
                 protected Pattern create(String s) {
                     return Pattern.compile(s);
                 }
+                @Override
                 protected boolean hasName(Pattern p, String s) {
                     return p.pattern().equals(s);
                 }
@@ -127,9 +129,10 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
     private static final String BOOLEAN_PATTERN = "true|false";
     private static Pattern boolPattern() {
         Pattern bp = boolPattern;
-        if (bp == null)
+        if (bp == null) {
             boolPattern = bp = Pattern.compile(BOOLEAN_PATTERN,
                     Pattern.CASE_INSENSITIVE);
+        }
         return bp;
     }
 
@@ -177,15 +180,17 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
 
     private static Pattern separatorPattern() {
         Pattern sp = separatorPattern;
-        if (sp == null)
+        if (sp == null) {
             separatorPattern = sp = Pattern.compile(LINE_SEPARATOR_PATTERN);
+        }
         return sp;
     }
 
     private static Pattern linePattern() {
         Pattern lp = linePattern;
-        if (lp == null)
+        if (lp == null) {
             linePattern = lp = Pattern.compile(LINE_PATTERN);
+        }
         return lp;
     }
 
@@ -284,7 +289,7 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
         // 判断一下输入的 InputStream 是不是 HackInputStream，
         // 如果是就调用一下它的 get 方法，把当前线程的输入流从 ThreadLocal 中取出来传入
         this(new InputStreamReader(
-                (source instanceof HackInputStream) ? ((HackInputStream) source).get() : source),
+                (source instanceof ThreadLocalInputStream) ? ((ThreadLocalInputStream) source).get() : source),
                 WHITESPACE_PATTERN);
     }
 
@@ -539,8 +544,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
             needInput = false;
         }
 
-        if (n > 0)
+        if (n > 0) {
             needInput = false;
+        }
 
         // Restore current position and limit for reading
         buf.limit(buf.position());
@@ -577,18 +583,20 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
     // When a buffer compaction/reallocation occurs the saved indexes must
     // be modified appropriately
     private void translateSavedIndexes(int offset) {
-        if (savedScannerPosition != -1)
+        if (savedScannerPosition != -1) {
             savedScannerPosition -= offset;
+        }
     }
 
     // If we are at the end of input then NoSuchElement;
     // If there is still input left then InputMismatch
     private void throwFor() {
         skipped = false;
-        if ((sourceClosed) && (position == buf.limit()))
+        if ((sourceClosed) && (position == buf.limit())) {
             throw new NoSuchElementException();
-        else
+        } else {
             throw new InputMismatchException();
+        }
     }
 
     // Returns true if a complete token or partial token is in the buffer.
@@ -600,14 +608,12 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
         matcher.region(position, buf.limit());
 
         // Skip delims first
-        if (matcher.lookingAt())
+        if (matcher.lookingAt()) {
             position = matcher.end();
+        }
 
         // If we are sitting at the end, no more tokens in buffer
-        if (position == buf.limit())
-            return false;
-
-        return true;
+        return position != buf.limit();
     }
 
     /*
@@ -647,8 +653,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
 
         // If we are sitting at the end, no more tokens in buffer
         if (position == buf.limit()) {
-            if (sourceClosed)
+            if (sourceClosed) {
                 return null;
+            }
             needInput = true;
             return null;
         }
@@ -731,8 +738,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
         int searchLimit = bufferLimit;
         if (horizon > 0) {
             horizonLimit = position + horizon;
-            if (horizonLimit < bufferLimit)
+            if (horizonLimit < bufferLimit) {
                 searchLimit = horizonLimit;
+            }
         }
         matcher.region(position, searchLimit);
         if (matcher.find()) {
@@ -757,13 +765,15 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
             return matcher.group();
         }
 
-        if (sourceClosed)
+        if (sourceClosed) {
             return null;
+        }
 
         // If there is no specified horizon, or if we have not searched
         // to the specified horizon yet, get more input
-        if ((horizon == 0) || (searchLimit != horizonLimit))
+        if ((horizon == 0) || (searchLimit != horizonLimit)) {
             needInput = true;
+        }
         return null;
     }
 
@@ -783,8 +793,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
             return matcher.group();
         }
 
-        if (sourceClosed)
+        if (sourceClosed) {
             return null;
+        }
 
         // Read more to find pattern
         needInput = true;
@@ -793,8 +804,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
 
     // Throws if the scanner is closed
     private void ensureOpen() {
-        if (closed)
+        if (closed) {
             throw new IllegalStateException("Scanner closed");
+        }
     }
 
     // Public methods
@@ -812,9 +824,11 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      * been closed will result in an {@link IllegalStateException}.
      *
      */
+    @Override
     public void close() {
-        if (closed)
+        if (closed) {
             return;
+        }
         if (source instanceof Closeable) {
             try {
                 ((Closeable)source).close();
@@ -923,17 +937,21 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
         nanString = "\\Q" + dfs.getNaN() + "\\E";
         infinityString = "\\Q" + dfs.getInfinity() + "\\E";
         positivePrefix = df.getPositivePrefix();
-        if (positivePrefix.length() > 0)
+        if (positivePrefix.length() > 0) {
             positivePrefix = "\\Q" + positivePrefix + "\\E";
+        }
         negativePrefix = df.getNegativePrefix();
-        if (negativePrefix.length() > 0)
+        if (negativePrefix.length() > 0) {
             negativePrefix = "\\Q" + negativePrefix + "\\E";
+        }
         positiveSuffix = df.getPositiveSuffix();
-        if (positiveSuffix.length() > 0)
+        if (positiveSuffix.length() > 0) {
             positiveSuffix = "\\Q" + positiveSuffix + "\\E";
+        }
         negativeSuffix = df.getNegativeSuffix();
-        if (negativeSuffix.length() > 0)
+        if (negativeSuffix.length() > 0) {
             negativeSuffix = "\\Q" + negativeSuffix + "\\E";
+        }
 
         // Force rebuilding and recompilation of locale dependent
         // primitive patterns
@@ -975,11 +993,13 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      * @throws IllegalArgumentException if radix is out of range
      */
     public ProxyScanner useRadix(int radix) {
-        if ((radix < Character.MIN_RADIX) || (radix > Character.MAX_RADIX))
+        if ((radix < Character.MIN_RADIX) || (radix > Character.MAX_RADIX)) {
             throw new IllegalArgumentException("radix:"+radix);
+        }
 
-        if (this.defaultRadix == radix)
+        if (this.defaultRadix == radix) {
             return this;
+        }
         this.defaultRadix = radix;
         // Force rebuilding and recompilation of radix dependent patterns
         integerPattern = null;
@@ -1016,8 +1036,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      * @throws IllegalStateException  If no match result is available
      */
     public MatchResult match() {
-        if (!matchValid)
+        if (!matchValid) {
             throw new IllegalStateException("No match result available");
+        }
         return matcher.toMatchResult();
     }
 
@@ -1028,6 +1049,7 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      *
      * @return  The string representation of this scanner
      */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("java.util.Scanner");
@@ -1057,12 +1079,14 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      * @throws IllegalStateException if this scanner is closed
      * @see Iterator
      */
+    @Override
     public boolean hasNext() {
         ensureOpen();
         saveState();
         while (!sourceClosed) {
-            if (hasTokenInBuffer())
+            if (hasTokenInBuffer()) {
                 return revertState(true);
+            }
             readInput();
         }
         boolean result = hasTokenInBuffer();
@@ -1081,6 +1105,7 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      * @throws IllegalStateException if this scanner is closed
      * @see Iterator
      */
+    @Override
     public String next() {
         ensureOpen();
         clearCaches();
@@ -1092,10 +1117,11 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
                 skipped = false;
                 return token;
             }
-            if (needInput)
+            if (needInput) {
                 readInput();
-            else
+            } else {
                 throwFor();
+            }
         }
     }
 
@@ -1106,6 +1132,7 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      * @throws UnsupportedOperationException if this method is invoked.
      * @see Iterator
      */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }
@@ -1158,8 +1185,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      */
     public boolean hasNext(Pattern pattern) {
         ensureOpen();
-        if (pattern == null)
+        if (pattern == null) {
             throw new NullPointerException();
+        }
         hasNextPattern = null;
         saveState();
 
@@ -1169,10 +1197,11 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
                 cacheResult();
                 return revertState(true);
             }
-            if (needInput)
+            if (needInput) {
                 readInput();
-            else
+            } else {
                 return revertState(false);
+            }
         }
     }
 
@@ -1190,12 +1219,14 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      */
     public String next(Pattern pattern) {
         ensureOpen();
-        if (pattern == null)
+        if (pattern == null) {
             throw new NullPointerException();
+        }
 
         // Did we already find this pattern?
-        if (hasNextPattern == pattern)
+        if (hasNextPattern == pattern) {
             return getCachedResult();
+        }
         clearCaches();
 
         // Search for the pattern
@@ -1206,10 +1237,11 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
                 skipped = false;
                 return token;
             }
-            if (needInput)
+            if (needInput) {
                 readInput();
-            else
+            } else {
                 throwFor();
+            }
         }
     }
 
@@ -1258,21 +1290,25 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      * @throws IllegalStateException if this scanner is closed
      */
     public String nextLine() {
-        if (hasNextPattern == linePattern())
+        if (hasNextPattern == linePattern()) {
             return getCachedResult();
+        }
         clearCaches();
 
-        String result = findWithinHorizon(linePattern, 0);
+        String result;
+        result = findWithinHorizon(linePattern, 0);
         if (result == null)
             throw new NoSuchElementException("No line found");
         MatchResult mr = this.match();
         String lineSep = mr.group(1);
-        if (lineSep != null)
+        if (lineSep != null) {
             result = result.substring(0, result.length() - lineSep.length());
-        if (result == null)
+        }
+        if (result == null) {
             throw new NoSuchElementException();
-        else
+        } else {
             return result;
+        }
     }
 
     // Public methods that ignore delimiters
@@ -1313,8 +1349,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      */
     public String findInLine(Pattern pattern) {
         ensureOpen();
-        if (pattern == null)
+        if (pattern == null) {
             throw new NullPointerException();
+        }
         clearCaches();
         // Expand buffer to include the next newline or end of input
         int endPosition = 0;
@@ -1337,8 +1374,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
         // If there is nothing between the current pos and the next
         // newline simply return null, invoking findWithinHorizon
         // with "horizon=0" will scan beyond the line bound.
-        if (horizonForLine == 0)
+        if (horizonForLine == 0) {
             return null;
+        }
         // Search for the pattern
         return findWithinHorizon(pattern, horizonForLine);
     }
@@ -1395,10 +1433,12 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      */
     public String findWithinHorizon(Pattern pattern, int horizon) {
         ensureOpen();
-        if (pattern == null)
+        if (pattern == null) {
             throw new NullPointerException();
-        if (horizon < 0)
+        }
+        if (horizon < 0) {
             throw new IllegalArgumentException("horizon < 0");
+        }
         clearCaches();
 
         // Search for the pattern
@@ -1408,10 +1448,11 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
                 matchValid = true;
                 return token;
             }
-            if (needInput)
+            if (needInput) {
                 readInput();
-            else
+            } else {
                 break; // up to end of input
+            }
         }
         return null;
     }
@@ -1441,8 +1482,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      */
     public ProxyScanner skip(Pattern pattern) {
         ensureOpen();
-        if (pattern == null)
+        if (pattern == null) {
             throw new NullPointerException();
+        }
         clearCaches();
 
         // Search for the pattern
@@ -1453,10 +1495,11 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
                 position = matcher.end();
                 return this;
             }
-            if (needInput)
+            if (needInput) {
                 readInput();
-            else
+            } else {
                 throw new NoSuchElementException();
+            }
         }
     }
 
@@ -1947,8 +1990,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
         clearCaches();
         try {
             String s = next(integerPattern());
-            if (matcher.group(SIMPLE_GROUP_INDEX) == null)
+            if (matcher.group(SIMPLE_GROUP_INDEX) == null) {
                 s = processIntegerToken(s);
+            }
             return Long.parseLong(s, radix);
         } catch (NumberFormatException nfe) {
             position = matcher.start(); // don't skip bad token
@@ -1966,8 +2010,9 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
      */
     private String processFloatToken(String token) {
         String result = token.replaceAll(groupSeparator, "");
-        if (!decimalSeparator.equals("\\."))
+        if (!decimalSeparator.equals("\\.")) {
             result = result.replaceAll(decimalSeparator, ".");
+        }
         boolean isNegative = false;
         int preLen = negativePrefix.length();
         if ((preLen > 0) && result.startsWith(negativePrefix)) {
@@ -1980,12 +2025,15 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
             result = result.substring(result.length() - sufLen,
                     result.length());
         }
-        if (result.equals(nanString))
+        if (result.equals(nanString)) {
             result = "NaN";
-        if (result.equals(infinityString))
+        }
+        if (result.equals(infinityString)) {
             result = "Infinity";
-        if (isNegative)
+        }
+        if (isNegative) {
             result = "-" + result;
+        }
 
         // Translate non-ASCII digits
         Matcher m = NON_ASCII_DIGIT.matcher(result);
@@ -1995,10 +2043,11 @@ public final class ProxyScanner implements Iterator<String>, Closeable {
                 char nextChar = result.charAt(i);
                 if (Character.isDigit(nextChar)) {
                     int d = Character.digit(nextChar, 10);
-                    if (d != -1)
+                    if (d != -1) {
                         inASCII.append(d);
-                    else
+                    } else {
                         inASCII.append(nextChar);
+                    }
                 } else {
                     inASCII.append(nextChar);
                 }

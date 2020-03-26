@@ -45,6 +45,7 @@ public class BinaryChunk {
         System.out.println(filename);
         FileChannel fc = null;
         try {
+
             fc = new RandomAccessFile(filename, "r").getChannel();
             MappedByteBuffer byteBuffer = fc.map(FileChannel.MapMode.READ_ONLY, 0,
                     fc.size()).load();

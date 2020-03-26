@@ -2,7 +2,7 @@ package github.cszxyang.olycode.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import github.cszxyang.olycode.web.service.ClientApplicationRunner;
-import github.cszxyang.olycode.web.vo.CompileRequestBody;
+import github.cszxyang.olycode.web.vo.ClientRequestBody;
 import github.cszxyang.olycode.web.vo.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,21 +17,20 @@ import org.springframework.web.bind.annotation.*;
  * @since 2020-01-28
  */
 @Controller
-public class RunCodeController {
+public class ExecController {
 
-    private Logger logger = LoggerFactory.getLogger(RunCodeController.class);
+    private Logger logger = LoggerFactory.getLogger(ExecController.class);
 
     @Autowired
     private ClientApplicationRunner clientApplicationRunner;
 
     @ResponseBody
     @RequestMapping(path = {"/run"}, method = RequestMethod.POST)
-    public Result run(@RequestBody String source) {
-        if (StringUtils.isEmpty(source)) {
+    public Result run(@RequestBody String body) {
+        if (StringUtils.isEmpty(body)) {
             return Result.buildFailResponse(HttpStatus.BAD_REQUEST.value());
         }
-        System.out.println();
-        CompileRequestBody req = JSON.parseObject(source, CompileRequestBody.class);
+        ClientRequestBody req = JSON.parseObject(body, ClientRequestBody.class);
         logger.info("compile request body: {}", req);
 
         String runResult = clientApplicationRunner.run(req.getCode());

@@ -69,7 +69,6 @@ public class ClientApplicationRunner {
             return compileErrorRes.toString();
         }
 
-        System.out.println(classBytes.length);
         // 运行字节码的main方法
         Callable<String> runTask = () -> ClientEntryInvoker.invoke(classBytes);
 
