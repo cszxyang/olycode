@@ -54,7 +54,7 @@ hs_err_pid*
 /bin
 
 !webapp/WEB-INF/web.xml
-webapp/
+#webapp/
 
 # windows
 Thumbs.db
