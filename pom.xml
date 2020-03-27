@@ -13,6 +13,7 @@
         <module>olycode-lua</module>
         <module>olycode-java</module>
         <module>olycode-web</module>
+        <module>olycode-python</module>
     </modules>
 
     <parent>

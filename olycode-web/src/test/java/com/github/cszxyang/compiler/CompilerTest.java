@@ -1,7 +1,5 @@
 package com.github.cszxyang.compiler;
 
-import github.cszxyang.olycode.java.compiler.CompileResult;
-import github.cszxyang.olycode.java.compiler.StringSourceCompiler;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
