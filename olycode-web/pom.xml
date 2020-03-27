@@ -59,7 +59,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>1.4.2.RELEASE</version><!--$NO-MVN-MAN-VER$-->
                 <configuration>
-                    <mainClass>github.cszxyang.olycode.web.AppEntry</mainClass>
+                    <mainClass>com.github.cszxyang.olycode.web.AppEntry</mainClass>
                 </configuration>
             </plugin>
             <plugin>
