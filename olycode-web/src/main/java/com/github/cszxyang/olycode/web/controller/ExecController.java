@@ -2,6 +2,7 @@ package com.github.cszxyang.olycode.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.cszxyang.olycode.web.service.ClientApplicationRunner;
+import com.github.cszxyang.olycode.web.service.ExecutionDispatcher;
 import com.github.cszxyang.olycode.web.vo.ClientRequestBody;
 import com.github.cszxyang.olycode.web.vo.Result;
 import org.slf4j.Logger;
@@ -24,6 +25,9 @@ public class ExecController {
     @Autowired
     private ClientApplicationRunner clientApplicationRunner;
 
+    @Autowired
+    private ExecutionDispatcher executionDispatcher;
+
     @ResponseBody
     @RequestMapping(path = {"/run"}, method = RequestMethod.POST)
     public Result run(@RequestBody String body) {
@@ -33,7 +37,7 @@ public class ExecController {
         ClientRequestBody req = JSON.parseObject(body, ClientRequestBody.class);
         logger.info("compile request body: {}", req);
 
-        String runResult = clientApplicationRunner.run(req.getCode());
+        String runResult = executionDispatcher.doAsyncDispatcher(req);
 
         logger.info("compile result: {}", runResult);
 

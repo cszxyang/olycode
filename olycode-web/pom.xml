@@ -13,8 +13,19 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>github.cszxyang.olycode</groupId>
             <artifactId>olycode-java</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>github.cszxyang.olycode</groupId>
+            <artifactId>olycode-python</artifactId>
             <version>1.0.0</version>
         </dependency>
 
