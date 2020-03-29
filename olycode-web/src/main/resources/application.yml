@@ -5,7 +5,18 @@ server:
       init-parameters:
         development: true
 spring:
+  application:
+    name: olycode
   mvc:
     view:
       prefix:  /WEB-INF/jsp/
       suffix: .jsp
+  datasource:
+    url: jdbc:mysql://localhost:3306/olycode?serverTimezone=UTC&useUnijava=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.github.cszxyang.olycode.web.stat.entity

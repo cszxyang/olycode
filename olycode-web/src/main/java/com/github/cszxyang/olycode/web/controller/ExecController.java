@@ -1,7 +1,6 @@
 package com.github.cszxyang.olycode.web.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.github.cszxyang.olycode.web.service.ClientApplicationRunner;
 import com.github.cszxyang.olycode.web.service.ExecutionDispatcher;
 import com.github.cszxyang.olycode.web.vo.ClientRequestBody;
 import com.github.cszxyang.olycode.web.vo.Result;
@@ -21,9 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class ExecController {
 
     private Logger logger = LoggerFactory.getLogger(ExecController.class);
-
-    @Autowired
-    private ClientApplicationRunner clientApplicationRunner;
 
     @Autowired
     private ExecutionDispatcher executionDispatcher;

@@ -1,8 +1,11 @@
 package com.github.cszxyang.olycode.web.aspect;
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.cszxyang.olycode.web.stat.entity.RequestRecord;
+import com.github.cszxyang.olycode.web.stat.service.RequestRecordService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -12,6 +15,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -20,6 +24,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Component
 public class ControllerVisitationAspect {
     private static final Logger LOG = LoggerFactory.getLogger(ControllerVisitationAspect.class);
+
+    @Autowired
+    private RequestRecordService requestRecordService;
 
     @Pointcut("execution(public * com.github.cszxyang.olycode.web..controller.*.*(..))")//两个..代表所有子目录，最后括号里的两个..代表所有参数
     public void statisticsPointCut() {
@@ -31,7 +38,14 @@ public class ControllerVisitationAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         assert attributes != null;
         HttpServletRequest request = attributes.getRequest();
-
+        RequestRecord requestRecord = new RequestRecord();
+        requestRecord.setRequestUrl(request.getRequestURL().toString());
+        requestRecord.setIp(request.getRemoteAddr());
+        requestRecord.setVisitTime(new Date());
+        boolean inserted = requestRecordService.insert(requestRecord);
+        if (inserted) {
+            LOG.info("Insert record successfully");
+        }
         // 记录下请求内容
         LOG.info("请求地址 : " + request.getRequestURL().toString());
         LOG.info("HTTP METHOD : " + request.getMethod());

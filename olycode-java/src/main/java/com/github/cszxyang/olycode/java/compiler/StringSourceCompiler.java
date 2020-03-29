@@ -5,7 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -16,19 +18,10 @@ import java.util.regex.Pattern;
  */
 public class StringSourceCompiler extends JdkCompiler {
 
-
-    /*public static void main(String[] args) {
-        StringSourceCompiler compiler = new StringSourceCompiler();
-        String s = "class Exmaple {\n" +
-                "        public static void main(String[] args) {\n" +
-                "            System.out.println(\"hello\");\n" +
-                "        }\n" +
-                "    }";
-        System.out.println(compiler.compile(s).length);
-    }*/
-
     private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-    private final DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<>();
+
+    private ModifiableDiagnosticCollector<FileObject> diagnosticCollector = new ModifiableDiagnosticCollector<>();
+
     private static Map<String, JavaFileObject> fileObjectMap = new ConcurrentHashMap<>();
     private JavaFileManager javaFileManager;
     /** 使用 Pattern 预编译功能 */
@@ -46,23 +39,28 @@ public class StringSourceCompiler extends JdkCompiler {
         return className;
     }
 
-    public byte[] compile(String source) {
+    public CompileResult compile(String source) {
+        CompileResult compileResult = new CompileResult();
         String className = getClassName(source, CLASS_PATTERN);
         // 把源码字符串构造成JavaFileObject，供编译使用
         JavaFileObject sourceJavaFileObject = new StringSourceJavaFileObject(className, source);
 
-        Boolean result = compiler.getTask(null, javaFileManager, diagnosticCollector,
+        Boolean compileSuccess = compiler.getTask(null, javaFileManager, diagnosticCollector,
                 null, null, Collections.singletonList(sourceJavaFileObject)).call();
 
-        JavaFileObject bytesJavaFileObject = fileObjectMap.get(className);
-        if (result && bytesJavaFileObject != null) {
-            return ((StringSourceJavaFileObject) bytesJavaFileObject).getCompiledBytes();
+        compileResult.setSuccess(compileSuccess);
+        if (!compileSuccess) {
+            compileResult.setDiagnostics(diagnosticCollector.getDiagnostics());
+            diagnosticCollector.clearDiagnostics();
+            return compileResult;
         }
-        return null;
+        JavaFileObject bytesJavaFileObject = fileObjectMap.get(className);
+        compileResult.setBytes(((StringSourceJavaFileObject) bytesJavaFileObject).getCompiledBytes());
+        return compileResult;
     }
 
     public StringSourceCompiler() {
-        StandardJavaFileManager manager = compiler.getStandardFileManager(diagnosticCollector, null, null);
+        StandardJavaFileManager manager = compiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.defaultCharset());
         javaFileManager = new JavaFileManagerImpl(manager);
     }
 

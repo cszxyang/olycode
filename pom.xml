@@ -14,7 +14,6 @@
         <module>olycode-java</module>
         <module>olycode-web</module>
         <module>olycode-python</module>
-        <module>olycode-statistics</module>
     </modules>
 
     <parent>

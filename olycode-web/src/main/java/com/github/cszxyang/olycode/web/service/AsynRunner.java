@@ -1,5 +1,6 @@
 package com.github.cszxyang.olycode.web.service;
 
+import com.github.cszxyang.olycode.java.compiler.CompileResult;
 import com.github.cszxyang.olycode.java.compiler.StringSourceCompiler;
 import com.github.cszxyang.olycode.java.exec.ClientEntryInvoker;
 import com.github.cszxyang.olycode.python.WrapperPythonInterpreter;
@@ -11,10 +12,9 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 
 import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaFileObject;
+import javax.tools.FileObject;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
 import java.util.concurrent.Future;
 
 @Component
@@ -30,27 +30,25 @@ public class AsynRunner {
     public Future<String> runJavaCode(ClientRequestBody requestBody) {
         logger.info("Thread [{}] is running Java Code", Thread.currentThread().getName());
 
-        // 编译结果收集器
-        DiagnosticCollector<JavaFileObject> compileCollector = new DiagnosticCollector<>();
-
         // 编译源代码
-        byte[] classBytes = compiler.compile(requestBody.getCode());
+        CompileResult compileResult = compiler.compile(requestBody.getCode());
 
-        // 编译不通过，获取并返回编译错误信息
-        if (Objects.isNull(classBytes)) {
-            // 获取编译错误信息
-            List<Diagnostic<? extends JavaFileObject>> compileError = compileCollector.getDiagnostics();
-            StringBuilder compileErrorRes = new StringBuilder();
-            for (Diagnostic<? extends JavaFileObject> diagnostic : compileError) {
-                compileErrorRes.append("Compilation error at ");
-                compileErrorRes.append(diagnostic.getLineNumber());
-                compileErrorRes.append(".");
-                compileErrorRes.append(System.lineSeparator());
-            }
-            return new AsyncResult<>(compileErrorRes.toString());
+        if (compileResult.isSuccess()) {
+            return new AsyncResult<>(ClientEntryInvoker.invoke(compileResult.getBytes()));
         }
-        String invoke = ClientEntryInvoker.invoke(classBytes);
-        return new AsyncResult<>(invoke);
+
+        // 获取编译错误信息
+        List<Diagnostic<? extends FileObject>> diagnostics = compileResult.getDiagnostics();
+        StringBuilder compileErrorRes = new StringBuilder();
+        for (Diagnostic<? extends FileObject> diagnostic : diagnostics) {
+            compileErrorRes.append("Compilation error at ");
+            compileErrorRes.append(diagnostic.getLineNumber());
+            compileErrorRes.append(": ");
+            compileErrorRes.append(diagnostic.getMessage(Locale.ENGLISH));
+            compileErrorRes.append(System.lineSeparator());
+            compileErrorRes.append(System.lineSeparator());
+        }
+        return new AsyncResult<>(compileErrorRes.toString());
     }
 
     @Async("luaCodeExecutor")

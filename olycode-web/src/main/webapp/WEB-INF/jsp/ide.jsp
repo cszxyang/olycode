@@ -7,10 +7,15 @@
     <link rel="stylesheet" href="css/ide.css">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
-    <link rel="stylesheet" href="bootstrap3/css/bootstrap.min.css">
+
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+
+    <%--<link rel="stylesheet" href="bootstrap3/css/bootstrap.min.css">
     <link rel="stylesheet" href="bootstrap3/css/bootstrap-theme.min.css">
-    <script src="bootstrap3/js/jquery-1.11.2.min.js"></script>
     <script src="bootstrap3/js/bootstrap.min.js"></script>
+    <script src="bootstrap3/js/jquery-1.11.2.min.js"></script>--%>
+
     <title>olycode</title>
 </head>
 <body>
