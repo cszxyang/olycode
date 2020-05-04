@@ -3,7 +3,7 @@
 Olycode is an online integrated development environment which supports executing the code written in Java, Python, Lua and other programming languages for free.
 
 <div align="center">
-    <img src="./docs/olycode.jpg" width="400px">
+    <img src="./docs/olycode.jpg" width="800px">
 </div>
 
 ## How to build
