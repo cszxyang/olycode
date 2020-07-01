@@ -1,20 +1,29 @@
-### olycode todo
+# Olycode
 
-- abtain AST through Java compiler API
-- diy JVM in c++
-- JNI
-- design code editor with CodeMirror
+Olycode is an online integrated development environment which supports executing the code written in Java, Python, Lua and other programming languages for free.
 
-table
+<div align="center">
+    <img src="./docs/olycode.jpg" width="800px">
+</div>
 
-```mysql
-CREATE TABLE request_record (
-`id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键id',
-`ip` varchar(50) NOT NULL DEFAULT '' COMMENT 'ip',
-`request_url` varchar(50) NOT NULL DEFAULT '' COMMENT 'request_url',
-`visit_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'visit_time',
-PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4  COMMENT='request_record';
+## How to build
 
-select count(*) from (select distinct ip from request_record) as t
+A Java-related development environment should be installed in your machine, once you have configured the maven environment variables, you can package the project by typing the following command on the command line.
+
+```shell
+mvn clean package
 ```
+Olycode is based on Spring-boot, so you can easily deploy and run the jar locally by simply using the following command.
+
+```shell
+java -jar olycode.jar
+```
+
+## Related technologies
+
+- Java dynamic compilation and class loading process
+- Spring-boot asynchronous programming
+- Bytecode manipulation
+- System I/O proxy
+- Java abstract syntax tree manipulation
+- Homemade lua compiler and virtual machine extended from [zxh0/luago-book](https://github.com/zxh0/luago-book)
