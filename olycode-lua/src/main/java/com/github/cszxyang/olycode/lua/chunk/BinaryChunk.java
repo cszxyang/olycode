@@ -1,5 +1,6 @@
 package com.github.cszxyang.olycode.lua.chunk;
 
+import com.github.cszxyang.olycode.common.proxy.ProxySystem;
 import lombok.Data;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -30,19 +31,8 @@ public class BinaryChunk {
     private static final int    LUAC_INT         = 0x5678;
     private static final double LUAC_NUM         = 370.5;
 
-    public static void main(String[] args) throws IOException {
-        Resource resource = new ClassPathResource("/lua/com.luac");
-        byte[] bytes = toByteArray(resource.getURL().getPath());
-        for (byte b : bytes) {
-            System.out.print(Integer.toHexString(b) + " ");
-        }
-        System.out.println();
-        undump(bytes);
-    }
-
-
     public static byte[] toByteArray(String filename) throws IOException {
-        System.out.println(filename);
+        ProxySystem.out.println(filename);
         FileChannel fc = null;
         try {
 
@@ -86,11 +76,11 @@ public class BinaryChunk {
             buf = ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN);
         }
 //        byte[] array = buf.array();
-//        System.out.println("\nundump");
+//        ProxySystem.out.println("\nundump");
 //        for (byte b : array) {
 //            System.out.print(Integer.toHexString(b) + " ");
 //        }
-//        System.out.println("\nundump1");
+//        ProxySystem.out.println("\nundump1");
 //        while (buf.remaining() > 0) {
 //            System.out.print(Integer.toHexString(buf.getInt()) + " ");
 //        }
@@ -103,7 +93,7 @@ public class BinaryChunk {
 
     private static void checkHeader(ByteBuffer buf) {
         int sig = buf.getInt();
-        System.out.println("\nsig" + Integer.toHexString(sig));
+        ProxySystem.out.println("\nsig" + Integer.toHexString(sig));
 
         ByteBuffer tempBuf;
         // get sys byte order

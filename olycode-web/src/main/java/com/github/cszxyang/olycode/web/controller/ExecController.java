@@ -33,7 +33,7 @@ public class ExecController {
         ClientRequestBody req = JSON.parseObject(body, ClientRequestBody.class);
         logger.info("compile request body: {}", req);
 
-        String runResult = executionDispatcher.doAsyncDispatcher(req);
+        String runResult = executionDispatcher.doAsyncDispatch(req);
 
         logger.info("compile result: {}", runResult);
 

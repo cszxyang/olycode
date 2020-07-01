@@ -10,8 +10,5 @@ import tk.mybatis.spring.annotation.MapperScan;
  */
 @SpringBootApplication
 @MapperScan("com.github.cszxyang.olycode.web.stat.mapper")
-public class AppEntry {
-    public static void main(String[] args) {
-        SpringApplication.run(AppEntry.class);
-    }
+public abstract class AppEntry {
 }

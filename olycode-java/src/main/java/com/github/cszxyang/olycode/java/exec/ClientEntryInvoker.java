@@ -1,7 +1,7 @@
 package com.github.cszxyang.olycode.java.exec;
 
 import com.github.cszxyang.olycode.java.bytecode.ConstantPoolManipulator;
-import com.github.cszxyang.olycode.java.proxy.ProxySystem;
+import com.github.cszxyang.olycode.common.proxy.ProxySystem;
 import javafx.util.Pair;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,8 +20,8 @@ public class ClientEntryInvoker {
 
     public static String invoke(byte[] bytecode) {
         List<Pair<String, String>> pairs = Arrays.asList(
-            new Pair<>("java/lang/System", "com/github/cszxyang/olycode/java/proxy/ProxySystem"),
-            new Pair<>("java/util/Scanner", "com/github/cszxyang/olycode/java/proxy/ProxyScanner")
+            new Pair<>("java/lang/System", "com/github/cszxyang/olycode/common/proxy/ProxySystem"),
+            new Pair<>("java/util/Scanner", "com/github/cszxyang/olycode/common/proxy/ProxyScanner")
         );
         byte[] bytes = ConstantPoolManipulator.doManipulate(bytecode, pairs);
 
@@ -33,6 +33,7 @@ public class ClientEntryInvoker {
             main.invoke(null, (Object) new String[0]);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.getCause().printStackTrace(ProxySystem.err);
+            ProxySystem.err.flush();
         }
         String execRes = ProxySystem.getBufferString();
         ProxySystem.closeBuffer();

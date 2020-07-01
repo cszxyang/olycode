@@ -3,6 +3,7 @@ package com.github.cszxyang.olycode.web.service;
 import com.github.cszxyang.olycode.java.compiler.CompileResult;
 import com.github.cszxyang.olycode.java.compiler.StringSourceCompiler;
 import com.github.cszxyang.olycode.java.exec.ClientEntryInvoker;
+import com.github.cszxyang.olycode.lua.LuaExecutor;
 import com.github.cszxyang.olycode.python.WrapperPythonInterpreter;
 import com.github.cszxyang.olycode.web.vo.ClientRequestBody;
 import org.slf4j.Logger;
@@ -26,7 +27,9 @@ public class AsynRunner {
 
     private WrapperPythonInterpreter pythonInterpreter = new WrapperPythonInterpreter();
 
-    @Async("javaCodeExecutor")
+    private LuaExecutor luaExecutor = new LuaExecutor();
+
+    @Async("codeExecutor")
     public Future<String> runJavaCode(ClientRequestBody requestBody) {
         logger.info("Thread [{}] is running Java Code", Thread.currentThread().getName());
 
@@ -51,13 +54,13 @@ public class AsynRunner {
         return new AsyncResult<>(compileErrorRes.toString());
     }
 
-    @Async("luaCodeExecutor")
+    @Async("codeExecutor")
     public Future<String> runLuaCode(ClientRequestBody requestBody) {
         logger.info("Thread [{}] is running lua Code", Thread.currentThread().getName());
-        return new AsyncResult<>("开发中, 敬请期待...");
+        return new AsyncResult<>(luaExecutor.execute(requestBody.getCode()));
     }
 
-    @Async("pythonCodeExecutor")
+    @Async("codeExecutor")
     public Future<String> runPythonCode(ClientRequestBody requestBody) {
         logger.info("Thread [{}] is running python Code", Thread.currentThread().getName());
         return new AsyncResult<>(pythonInterpreter.execute(requestBody.getCode()));

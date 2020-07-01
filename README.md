@@ -15,4 +15,6 @@ CREATE TABLE request_record (
 `visit_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'visit_time',
 PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4  COMMENT='request_record';
+
+select count(*) from (select distinct ip from request_record) as t
 ```

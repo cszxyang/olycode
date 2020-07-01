@@ -39,6 +39,18 @@
 
         <dependency>
             <groupId>github.cszxyang.olycode</groupId>
+            <artifactId>olycode-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>github.cszxyang.olycode</groupId>
+            <artifactId>olycode-lua</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>github.cszxyang.olycode</groupId>
             <artifactId>olycode-java</artifactId>
             <version>1.0.0</version>
         </dependency>
@@ -86,6 +98,19 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerArgs>
+                        <arg>-XDignore.symbol.file</arg>
+                    </compilerArgs>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>1.4.2.RELEASE</version><!--$NO-MVN-MAN-VER$-->
@@ -101,18 +126,19 @@
                     <useDefaultDelimiters>true</useDefaultDelimiters>
                 </configuration>
             </plugin>
+
         </plugins>
-     <!--   <resources>
+        <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
             <resource>
                 <directory>src/main/webapp/</directory>
-                &lt;!&ndash;注意此次必须要放在此目录下才能被访问到 &ndash;&gt;
+                <!--注意此次必须要放在此目录下才能被访问到 -->
                 <targetPath>META-INF/resources</targetPath>
             </resource>
-        </resources>-->
+        </resources>
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>

@@ -15,7 +15,7 @@ public class CompilerTest {
                 "class CalculatorTest {\n" +
                 "  public void testMultiply() {\n" +
                 "    Calculator c = new Calculator()\n" +
-                "    System.out.println(c.multiply(2, 4));\n" +
+                "    ProxySystem.out.println(c.multiply(2, 4));\n" +
                 "  }\n" +
                 "  public static void main(String[] args) {\n" +
                 "    CalculatorTest ct = new CalculatorTest();\n" +
@@ -25,7 +25,7 @@ public class CompilerTest {
         /*URI uri = new URI("com.github.cszxyang.CalculatorTest.");
         Compiler compiler = new StringSourceCompiler();
         CompileResult result = compiler.compile(uri, codeStr);
-        System.out.println(result.getCompileReport());;*/
+        ProxySystem.out.println(result.getCompileReport());;*/
     }
 
     @Test

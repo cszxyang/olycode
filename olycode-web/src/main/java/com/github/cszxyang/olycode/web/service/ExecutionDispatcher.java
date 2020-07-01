@@ -3,8 +3,8 @@ package com.github.cszxyang.olycode.web.service;
 import com.github.cszxyang.olycode.web.enums.LanguageType;
 import com.github.cszxyang.olycode.web.enums.ResponseMessageEnum;
 import com.github.cszxyang.olycode.web.vo.ClientRequestBody;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -24,9 +24,9 @@ public class ExecutionDispatcher {
     @Autowired
     private AsynRunner asynRunner;
 
-    public String doAsyncDispatcher(ClientRequestBody requestBody) {
+    public String doAsyncDispatch(ClientRequestBody requestBody) {
         if (!validateBody(requestBody)) {
-            throw new IllegalArgumentException("Expect argument not present");
+            throw new IllegalArgumentException("Expect arguments not present");
         }
         Future<String> future;
         switch (LanguageType.langStrToEnum(requestBody.getLang())) {
@@ -55,8 +55,7 @@ public class ExecutionDispatcher {
         } finally {
             future.cancel(true);
         }
-        System.out.println("runResult: " + runResult);
-        return runResult != null ? runResult : "";
+        return Objects.nonNull(runResult) ? runResult : Strings.EMPTY;
     }
 
     private boolean validateBody(ClientRequestBody requestBody) {

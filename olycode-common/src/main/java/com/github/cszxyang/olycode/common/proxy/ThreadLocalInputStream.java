@@ -1,4 +1,4 @@
-package com.github.cszxyang.olycode.java.proxy;
+package com.github.cszxyang.olycode.common.proxy;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

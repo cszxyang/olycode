@@ -7,7 +7,7 @@ public class BinaryChunkTest {
         /*Resource resource = new ClassPathResource("/lua/com.luac");
         byte[] bytes = BinaryChunk.toByteArray(resource.getURL().getPath());
         Prototype proto = BinaryChunk.undump(bytes);
-        System.out.println(proto);*/
+        ProxySystem.out.println(proto);*/
 
         /*assertEquals("@hello_world.lua", proto.getSource());
         assertEquals(0, proto.getLineDefined());

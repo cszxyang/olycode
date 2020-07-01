@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +24,27 @@ public class StringSourceCompiler extends JdkCompiler {
     private JavaFileManager javaFileManager;
     /** 使用 Pattern 预编译功能 */
     private static final Pattern CLASS_PATTERN = Pattern.compile("class\\s+([$_a-zA-Z][$_a-zA-Z0-9]*)\\s*");
+
+    private List<ExprCodeCheckProcessor> loopLimitEnhancers = Collections.singletonList(new ExprCodeCheckProcessor());
+
+    public static void main(String[] args) {
+        StringSourceCompiler compiler = new StringSourceCompiler();
+        String code = "import java.util.Arrays;\n" +
+                "import java.util.List;\n" +
+                "import java.util.stream.IntStream;\n" +
+                "\n" +
+                "public class Example {\n" +
+                "\n" +
+                "    public static void main(String[] args) {\n" +
+                "\n" +
+                "        // endless loop handling\n" +
+                "        for (int i = 0; i < 10; i++) {\n" +
+                "            System.out.println(\"running...\");\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n";
+        System.out.println(compiler.compile(code));
+    }
 
     private String getClassName(String source, Pattern pattern) {
         // 从源码字符串中匹配类名
@@ -45,8 +64,19 @@ public class StringSourceCompiler extends JdkCompiler {
         // 把源码字符串构造成JavaFileObject，供编译使用
         JavaFileObject sourceJavaFileObject = new StringSourceJavaFileObject(className, source);
 
-        Boolean compileSuccess = compiler.getTask(null, javaFileManager, diagnosticCollector,
-                null, null, Collections.singletonList(sourceJavaFileObject)).call();
+        JavaCompiler.CompilationTask task = compiler.getTask(null, javaFileManager, diagnosticCollector,
+                options, null, Collections.singletonList(sourceJavaFileObject));
+
+        if (loopLimitEnhancers != null) {
+            //task.setProcessors(loopLimitEnhancers);
+        }
+
+        Boolean compileSuccess = false;
+        try {
+            compileSuccess = task.call();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         compileResult.setSuccess(compileSuccess);
         if (!compileSuccess) {

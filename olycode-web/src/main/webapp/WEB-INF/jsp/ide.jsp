@@ -94,18 +94,23 @@
         "    }\n" +
         "}\n";
 
-    var luaCode = '-- defines a factorial function\n' +
-        '    function fact (n)\n' +
-        '      if n == 0 then\n' +
-        '        return 1\n' +
-        '      else\n' +
-        '        return n * fact(n-1)\n' +
-        '      end\n' +
+    var luaCode = '-- test upvalues\n' +
+        'function newCounter ()\n' +
+        '    local count = 0\n' +
+        '    return function () \n' +
+        '        count = count + 1\n' +
+        '        return count\n' +
         '    end\n' +
-        '    \n' +
-        '    print("enter a number:")\n' +
-        '    a = io.read("*number")        -- read a number\n' +
-        '    print(fact(a))';
+        'end\n' +
+        '\n' +
+        'c1 = newCounter()\n' +
+        'print(c1())\n' +
+        'print(c1())\n' +
+        '\n' +
+        'c2 = newCounter()\n' +
+        'print(c2())\n' +
+        'print(c1())\n' +
+        'print(c2())';
 
     var pythonCode = '#!/usr/bin/python\n' +
         '\n' +

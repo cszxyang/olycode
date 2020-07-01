@@ -3,13 +3,6 @@ package com.github.cszxyang.olycode.common.util;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-/**
- * Miscellaneous method utility methods.
- * Mainly for internal use within the framework.
- *
- * @author LiZhenNet
- * @since 2.7.2
- */
 public class MethodUtils {
 
     /**

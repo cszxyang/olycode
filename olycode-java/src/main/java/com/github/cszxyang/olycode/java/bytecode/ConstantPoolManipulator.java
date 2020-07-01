@@ -93,29 +93,16 @@ public class ConstantPoolManipulator {
 
     public static byte[] doManipulate(byte[] bytecode, List<Pair<String, String>> pairs) {
         Map<String, ConstantPoolItem> constantPool = getConstantPool(bytecode);
-        /*for (String info : constantPool.keySet()) {
-            System.out.println(constantPool.get(info));
-        }
-        System.out.println("---------------------------------");*/
 
         for (Pair<String, String> pair : pairs) {
             ConstantPoolItem item = constantPool.get(pair.getKey());
             if (item != null) {
-                System.out.println(item);
-
                 byte[] strReplaceBytes = ByteUtil.stringToBytes(pair.getValue());
                 byte[] intReplaceBytes = ByteUtil.intToBytes(strReplaceBytes.length, U2);
                 // 替换新的字符串的长度
                 bytecode = ByteUtil.byteReplace(bytecode, item.getOffsetOfInfo() - U2, U2, intReplaceBytes);
                 // 替换字符串本身
                 bytecode = ByteUtil.byteReplace(bytecode, item.getOffsetOfInfo(), item.getLen(), strReplaceBytes);
-
-                /*System.out.println("---------------------------------");
-                Map<String, ConstantPoolItem> constantPool1 = getConstantPool(bytecode);
-                for (String info : constantPool1.keySet()) {
-                    System.out.println(constantPool1.get(info));
-                }
-                System.out.println("---------------------------------");*/
             }
         }
         return bytecode;
