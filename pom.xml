@@ -26,7 +26,7 @@
 
     <properties>
         <projectlombok-version>1.18.8</projectlombok-version>
-        <fastjaon-version>1.2.62</fastjaon-version>
+        <fastjaon-version>1.2.83</fastjaon-version>
     </properties>
 
     <dependencies>
